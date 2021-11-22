@@ -18,6 +18,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { DB_NAME } from '../../App';
 import LoadingOverlay from '../../components/LoadingOverlay';
@@ -49,7 +50,6 @@ const AddOrEditScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [mode, setMode] = useState('date');
   const [showPicker, setShowPicker] = useState(false);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: type === 'add' ? 'Add Property' : 'Edit Property',
@@ -143,9 +143,31 @@ const AddOrEditScreen = () => {
 
     if (type === 'add') {
       setIsLoading(true);
-      const insertStatus = await insertData(DB_NAME, data);
+      const res = await getDataByField(
+        DB_NAME,
+        'property_type',
+        data.propertyType,
+      );
 
-      if (insertStatus) {
+      if (res.length > 0) {
+        setIsLoading(false);
+        Alert.alert(
+          `Property ${data.propertyType} is already exists`,
+          '',
+          [
+            {
+              text: 'OK',
+              style: 'cancel',
+            },
+          ],
+          { cancelable: false },
+        );
+        return;
+      }
+
+      const addData = await addData(DB_NAME, data);
+
+      if (addData) {
         setIsLoading(false);
         Alert.alert(
           'Success',
@@ -176,7 +198,7 @@ const AddOrEditScreen = () => {
 
   return (
     <>
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior='padding' style={styles.container}>
         <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
           <Text style={styles.label}>{'Image'}</Text>
           <View style={styles.pickImageContainer}>
@@ -214,27 +236,27 @@ const AddOrEditScreen = () => {
             )}
           </View>
           <MainTextInput
-            placeholder={'e.g. flat, house, etc.'}
+            placeholder={'example flat, house'}
             label={'Property type'}
-            isRequired
             validRegExp={/^(?!\s*$).+/}
-            errorText={'This field is not empty'}
+            errorText={'This input field cannot be left blank'}
             onChangeText={propertyType => {
               setData({ ...data, propertyType });
             }}
             value={data.propertyType}
+            isRequired
           />
           <MainTextInput
-            placeholder={'e.g. 1, 2, etc.'}
+            placeholder={'example 1, 2'}
             label={'Bedrooms'}
-            isRequired
             validRegExp={/^([0-9]){1,}$/}
-            errorText={'Just enter numeric and\nDo not leave it empty'}
+            errorText={'Numeric only and cannot be left blank'}
             onChangeText={bedrooms => {
               setData({ ...data, bedrooms });
             }}
             value={data.bedrooms}
             keyboardType={'numeric'}
+            isRequired
           />
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View
@@ -242,13 +264,11 @@ const AddOrEditScreen = () => {
                 flex: 1,
               }}>
               <MainTextInput
-                placeholder={'e.g. 2021/01/01 23:16'}
-                label={'Date&Time'}
+                placeholder={'e.g. 2021/10/10 7:20'}
+                label={'Date & Time'}
                 isRequired
                 validRegExp={/(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2})/}
-                errorText={
-                  'Please follow [YYYY-MM-DD HH:MM] format and\nDo not leave it empty'
-                }
+                errorText={'Please follow [YYYY-MM-DD HH:MM] format'}
                 onChangeText={dateTime => {
                   setData({ ...data, dateTime });
                 }}
@@ -382,6 +402,7 @@ const AddOrEditScreen = () => {
               <Picker.Item label='Semi-furnished' value='Semi-furnished' />
             </Picker>
           </SlideupModal>
+
           <MainTextInput
             placeholder={'Add some notes here'}
             label={'Notes'}
@@ -411,7 +432,7 @@ const AddOrEditScreen = () => {
           disabled={!valid}
           onPress={onSubmit}
         />
-      </View>
+      </KeyboardAvoidingView>
       <LoadingOverlay visible={isLoading} />
     </>
   );

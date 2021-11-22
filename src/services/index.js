@@ -1,8 +1,8 @@
 import * as SQLite from "expo-sqlite";
 
 // Open database with name and version
-export const openDatabase = (name, version) => {
-  return SQLite.openDatabase(`${name}.db`, version, "database", 1);
+export const openDatabase = (db_name, version) => {
+  return SQLite.openDatabase(`${db_name}.db`, version, "database", 1);
 };
 
 // Open
