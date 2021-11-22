@@ -11,6 +11,7 @@ import React, {
 import {
   Alert,
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -257,14 +258,14 @@ const AddOrEditScreen = () => {
                 <View style={{ paddingRight: 16 }}>
                   <DateTimePicker
                     testID='dateTimePicker'
-                    timeZoneOffsetInMinutes={0}
+                    timeZoneOffsetInMinutes={7 * 60}
                     value={date}
                     mode={mode}
                     is24Hour={true}
                     display='default'
                     onChange={(event, selectedDate) => {
                       const currentDate = selectedDate || date;
-                      setShowDatePicker(false);
+                      setShowDatePicker(Platform.OS === 'ios');
                       setDate(currentDate);
                       setData({
                         ...data,
@@ -280,6 +281,7 @@ const AddOrEditScreen = () => {
                 style={styles.outlineButton}
                 onPress={() => {
                   showDatePickerHandler('date');
+                  setData({ ...data, dateTime: formatDateAndTime(date) });
                 }}>
                 <Text style={styles.setText}>{'Set Date'}</Text>
               </TouchableHighlight>
@@ -288,6 +290,7 @@ const AddOrEditScreen = () => {
                 style={styles.outlineButton}
                 onPress={() => {
                   showDatePickerHandler('time');
+                  setData({ ...data, dateTime: formatDateAndTime(date) });
                 }}>
                 <Text style={styles.setText}>{'Set Time'}</Text>
               </TouchableHighlight>
