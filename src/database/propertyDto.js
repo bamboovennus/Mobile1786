@@ -49,7 +49,7 @@ export const createTable = async (tableName) => {
   });
 };
 
-export const insertData = async (tableName, data) => {
+export const addData = async (tableName, data) => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(

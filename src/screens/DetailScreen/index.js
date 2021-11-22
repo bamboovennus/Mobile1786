@@ -4,7 +4,15 @@ import {
   useRoute,
 } from "@react-navigation/core";
 import React, { useState, useLayoutEffect } from "react";
-import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  KeyboardAvoidingView,
+} from "react-native";
 import { DB_NAME } from "../../App";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import MainButton from "../../components/MainButton";
@@ -79,7 +87,11 @@ const DetailScreen = () => {
 
   return (
     <>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        style={styles.container}
+        style={styles.container}
+      >
         <ScrollView>
           <View style={styles.imageContainer}>
             {data?.image && data.image.length > 0 ? (
@@ -124,7 +136,7 @@ const DetailScreen = () => {
             />
           </View>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
       <LoadingOverlay visible={isLoading} />
     </>
   );
