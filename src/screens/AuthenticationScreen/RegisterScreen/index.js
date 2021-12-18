@@ -17,11 +17,12 @@ import { MainRoutes } from "../../../routing";
 const validUsernameRegex = /^[a-zA-Z0-9]+$/;
 const validPasswordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-const LoginScreen = () => {
+const RegisterScreen = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useLayoutEffect(() => {
@@ -45,7 +46,7 @@ const LoginScreen = () => {
     }, [navigation])
   );
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     if (
       !validUsernameRegex.test(username) &&
       !validPasswordRegex.test(password)
@@ -54,32 +55,30 @@ const LoginScreen = () => {
       return;
     }
 
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Password and Confirm password must be the same");
+      return;
+    }
+
     setIsLoading(true);
+
     try {
       const user = await getOneUser(username);
-      setIsLoading(false);
 
-      if (user) {
-        await updateLoggedInStatus(username, 1);
-        if (user.password === password) {
-          navigation.navigate(MainRoutes.HOME, { username });
-        } else {
-          Alert.alert("Error", "Invalid password");
-          setPassword("");
-        }
+      if (!user) {
+        await insertUser({ username, password, isLoggedIn: 0 });
+        setIsLoading(false);
 
+        Alert.alert("Success", "You have successfully registered!");
         return;
       }
 
-      Alert.alert("User not found", "You may want to register!");
+      Alert.alert("User already exists", "Please login!");
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       Alert.alert("Error", "Something went wrong");
     }
-  };
-
-  const handleRegister = async () => {
-    navigation.navigate("RegisterScreen");
   };
 
   return (
@@ -108,44 +107,46 @@ const LoginScreen = () => {
             value={password}
             onChangeText={setPassword}
           />
+          <MainTextInput
+            label={"Confirm Password"}
+            isRequired
+            validRegExp={validPasswordRegex}
+            errorText={
+              "Password must be at least 6 characters\nand contain at least one letter and one number"
+            }
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
         </View>
+
         <View style={styles.buttonContainer}>
           <MainButton
-            buttonText={"Login"}
+            buttonText={"Register"}
             fontSize={16}
-            onPress={handleLogin}
-            backgroundColor={"#290"}
+            onPress={handleRegister}
+            backgroundColor={"blue"}
           />
-          <View
+        </View>
+
+        <TouchableOpacity
+          style={{
+            position: "absolute",
+            top: insets.top + 64,
+            left: 32,
+          }}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
+          <Text
             style={{
-              marginHorizontal: 16,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-              flex: 1,
+              fontWeight: "700",
             }}
           >
-            <Text style={styles.separateText}>
-              {"Dont't have an account? "}
-            </Text>
-            <TouchableOpacity
-              style={{
-                borderBottomWidth: 1,
-              }}
-              onPress={handleRegister}
-            >
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: "#030303",
-                  fontWeight: "700",
-                }}
-              >
-                {"Register now!"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+            {"Back to Login"}
+          </Text>
+        </TouchableOpacity>
       </View>
       <LoadingOverlay visible={isLoading} />
     </>
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     color: "#290",
   },
   headerContainer: {
-    marginBottom: 64,
+    marginBottom: 16,
     flex: 1,
     justifyContent: "flex-end",
   },
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    marginBottom: 36,
+    marginBottom: 125,
   },
   separateText: {
     fontSize: 12,
@@ -191,4 +192,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default RegisterScreen;

@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     borderWidth: 1,
-    borderRadius: 5,
-    padding: 8,
+    borderRadius: 8,
+    padding: 12,
     marginTop: 8,
   },
   errorContainer: {

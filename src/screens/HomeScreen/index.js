@@ -32,7 +32,6 @@ const HomeScreen = () => {
   const { username } = useRoute().params;
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showButton, setshowButton] = useState(false);
 
   const onSearch = useCallback(
     (keyword) => {
@@ -156,7 +155,6 @@ const HomeScreen = () => {
         activeOpacity={0.6}
         key={index.toString()}
         onLongPress={() => {
-          setshowButton(true);
           Alert.alert("Choose Action", "", [
             {
               text: "Edit",
@@ -184,30 +182,6 @@ const HomeScreen = () => {
         }}
       >
         <View style={{ flexDirection: "row" }}>
-          {/* <TouchableHighlight
-            style={styles.deleteBox}
-            onPress={() => {
-              item.id && onDelete(item.id);
-            }}
-          >
-            <Text style={{ color: "white", fontSize: 8, fontWeight: "bold" }}>
-              {"Delete"}
-            </Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.editBox}
-            onPress={() => {
-              navigation.navigate(MainRoutes.ADD_OR_EDIT, {
-                type: "edit",
-                id: item.id?.toString(),
-              });
-            }}
-          >
-            <Text style={{ color: "white", fontSize: 8, fontWeight: "bold" }}>
-              {"Edit"}
-            </Text>
-          </TouchableHighlight> */}
-
           <View style={[styles.item]}>
             <View>
               <Text style={styles.itemText}>{item.propertyType}</Text>
@@ -239,7 +213,7 @@ const HomeScreen = () => {
             data.map((item, index) => renderItem({ item, index }))
           ) : (
             <Text style={styles.noDataText}>
-              {"No data found. Please add your first property!"}
+              {"Ooop!! You have no properties yet"}
             </Text>
           )}
         </ScrollView>
@@ -300,7 +274,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 20,
+    borderRadius: 8,
     marginBottom: 16,
     flexDirection: "row",
     alignItems: "center",

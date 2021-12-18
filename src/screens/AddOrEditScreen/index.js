@@ -1,13 +1,13 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
-import { useNavigation, useRoute } from '@react-navigation/core';
-import * as ImagePicker from 'expo-image-picker';
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
+import { useNavigation, useRoute } from "@react-navigation/core";
+import * as ImagePicker from "expo-image-picker";
 import React, {
   useState,
   useCallback,
   useEffect,
   useLayoutEffect,
-} from 'react';
+} from "react";
 import {
   Alert,
   Image,
@@ -19,44 +19,45 @@ import {
   TouchableOpacity,
   View,
   KeyboardAvoidingView,
-} from 'react-native';
-import { DB_NAME } from '../../App';
-import LoadingOverlay from '../../components/LoadingOverlay';
-import MainButton from '../../components/MainButton';
-import MainTextInput from '../../components/MainTextInput';
-import SlideupModal from '../../components/SlideupModal/SlideupModal';
+} from "react-native";
+import { DB_NAME } from "../../App";
+import LoadingOverlay from "../../components/LoadingOverlay";
+import MainButton from "../../components/MainButton";
+import MainTextInput from "../../components/MainTextInput";
+import SlideupModal from "../../components/SlideupModal/SlideupModal";
 import {
   DataType,
   getDataByField,
   insertData,
+  addData,
   updateData,
-} from '../../database/propertyDto';
-import { MainRoutes } from '../../routing';
-import { formatDateAndTime } from '../../utils';
+} from "../../database/propertyDto";
+import { MainRoutes } from "../../routing";
+import { formatDateAndTime } from "../../utils";
 
 const AddOrEditScreen = () => {
   const navigation = useNavigation();
   const { type, id } = useRoute().params;
   const [valid, setValid] = useState(false);
   const [data, setData] = useState({
-    propertyType: '',
-    bedrooms: '',
-    dateTime: '',
-    monthlyRentPrice: '',
-    reporterName: '',
+    propertyType: "",
+    bedrooms: "",
+    dateTime: "",
+    monthlyRentPrice: "",
+    reporterName: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [mode, setMode] = useState('date');
+  const [mode, setMode] = useState("date");
   const [showPicker, setShowPicker] = useState(false);
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: type === 'add' ? 'Add Property' : 'Edit Property',
+      headerTitle: type === "add" ? "Add Property" : "Edit Property",
     });
 
-    if (type === 'edit') {
-      getDataByField(DB_NAME, 'id', id).then(data => {
+    if (type === "edit") {
+      getDataByField(DB_NAME, "id", id).then((data) => {
         setData({
           ...data[0],
           monthlyRentPrice: data[0].monthlyRentPrice.toString(),
@@ -80,29 +81,13 @@ const AddOrEditScreen = () => {
     }
   }, [data]);
 
-  const showDatePickerHandler = useCallback(currentMode => {
+  const showDatePickerHandler = useCallback((currentMode) => {
     setShowDatePicker(true);
     setMode(currentMode);
   }, []);
 
-  const pickImage = useCallback(async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setData({
-        ...data,
-        image: result.uri,
-      });
-    }
-  }, []);
-
   const onSubmit = async () => {
-    if (type === 'edit') {
+    if (type === "edit") {
       setIsLoading(true);
 
       try {
@@ -110,87 +95,87 @@ const AddOrEditScreen = () => {
         setIsLoading(false);
         if (result) {
           Alert.alert(
-            'Success',
-            'Property updated successfully',
+            "Success",
+            "Property updated successfully",
             [
               {
-                text: 'OK',
+                text: "OK",
                 onPress: () => {
                   navigation.goBack();
                 },
               },
             ],
-            { cancelable: false },
+            { cancelable: false }
           );
         }
       } catch (error) {
         setIsLoading(false);
         Alert.alert(
-          'Error',
-          'Something went wrong',
+          "Error",
+          "Something went wrong",
           [
             {
-              text: 'OK',
-              style: 'cancel',
+              text: "OK",
+              style: "cancel",
             },
           ],
-          { cancelable: false },
+          { cancelable: false }
         );
       }
 
       return;
     }
 
-    if (type === 'add') {
+    if (type === "add") {
       setIsLoading(true);
       const res = await getDataByField(
         DB_NAME,
-        'property_type',
-        data.propertyType,
+        "property_type",
+        data.propertyType
       );
 
       if (res.length > 0) {
         setIsLoading(false);
         Alert.alert(
           `Property ${data.propertyType} is already exists`,
-          '',
+          "",
           [
             {
-              text: 'OK',
-              style: 'cancel',
+              text: "OK",
+              style: "cancel",
             },
           ],
-          { cancelable: false },
+          { cancelable: false }
         );
         return;
       }
 
-      const addData = await addData(DB_NAME, data);
+      const adddata = await addData(DB_NAME, data);
 
-      if (addData) {
+      if (adddata) {
         setIsLoading(false);
         Alert.alert(
-          'Success',
-          'Inserted Successfully',
+          "Success",
+          "Inserted Successfully",
           [
             {
-              text: 'OK',
+              text: "OK",
               onPress: () => navigation.goBack(),
             },
           ],
-          { cancelable: false },
+          { cancelable: false }
         );
       } else {
         Alert.alert(
-          'Error',
-          'Inserted Failed',
+          "Error",
+          "Inserted Failed",
           [
             {
-              text: 'OK',
-              style: 'cancel',
+              text: "OK",
+              style: "cancel",
             },
           ],
-          { cancelable: false },
+          { cancelable: false }
         );
       }
     }
@@ -198,78 +183,44 @@ const AddOrEditScreen = () => {
 
   return (
     <>
-      <KeyboardAvoidingView behavior='padding' style={styles.container}>
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-          <Text style={styles.label}>{'Image'}</Text>
-          <View style={styles.pickImageContainer}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderBottomColor: 'grey',
-                borderBottomWidth: 3,
-                paddingBottom: 10,
-              }}>
-              <TouchableOpacity
-                style={[styles.outlineButton, { height: 50, flex: 1 }]}
-                onPress={() => {
-                  pickImage();
-                }}>
-                <Text style={styles.setText}>{'Pick Image'}</Text>
-              </TouchableOpacity>
-              <View style={{ marginHorizontal: 8 }} />
-              <TouchableOpacity
-                style={[
-                  styles.outlineButton,
-                  { height: 50, backgroundColor: 'red' },
-                ]}
-                onPress={() => {
-                  setData({ ...data, image: '' });
-                }}>
-                <Text style={styles.setText}>{'Clear Image'}</Text>
-              </TouchableOpacity>
-            </View>
-            {data.image && data.image.length > 0 ? (
-              <Image source={{ uri: data.image }} style={styles.image} />
-            ) : (
-              <Text>{'No image choosed'}</Text>
-            )}
-          </View>
           <MainTextInput
-            placeholder={'example flat, house'}
-            label={'Property type'}
+            placeholder={"example flat, house"}
+            label={"Property type"}
             validRegExp={/^(?!\s*$).+/}
-            errorText={'This input field cannot be left blank'}
-            onChangeText={propertyType => {
+            errorText={"This input field cannot be left blank"}
+            onChangeText={(propertyType) => {
               setData({ ...data, propertyType });
             }}
             value={data.propertyType}
             isRequired
           />
           <MainTextInput
-            placeholder={'example 1, 2'}
-            label={'Bedrooms'}
+            placeholder={"example 1, 2"}
+            label={"Bedrooms"}
             validRegExp={/^([0-9]){1,}$/}
-            errorText={'Numeric only and cannot be left blank'}
-            onChangeText={bedrooms => {
+            errorText={"Numeric only and cannot be left blank"}
+            onChangeText={(bedrooms) => {
               setData({ ...data, bedrooms });
             }}
             value={data.bedrooms}
-            keyboardType={'numeric'}
+            keyboardType={"numeric"}
             isRequired
           />
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View
               style={{
                 flex: 1,
-              }}>
+              }}
+            >
               <MainTextInput
-                placeholder={'e.g. 2021/10/10 7:20'}
-                label={'Date & Time'}
+                placeholder={"e.g. 2021/10/10 7:20"}
+                label={"Date & Time"}
                 isRequired
                 validRegExp={/(\d{4})\-(\d{2})\-(\d{2}) (\d{2}):(\d{2})/}
-                errorText={'Please follow [YYYY-MM-DD HH:MM] format'}
-                onChangeText={dateTime => {
+                errorText={"Please follow [YYYY-MM-DD HH:MM] format"}
+                onChangeText={(dateTime) => {
                   setData({ ...data, dateTime });
                 }}
                 value={data.dateTime}
@@ -277,15 +228,15 @@ const AddOrEditScreen = () => {
               {showDatePicker && (
                 <View style={{ paddingRight: 16 }}>
                   <DateTimePicker
-                    testID='dateTimePicker'
+                    testID="dateTimePicker"
                     timeZoneOffsetInMinutes={7 * 60}
                     value={date}
                     mode={mode}
                     is24Hour={true}
-                    display='default'
+                    display="default"
                     onChange={(event, selectedDate) => {
                       const currentDate = selectedDate || date;
-                      setShowDatePicker(Platform.OS === 'ios');
+                      setShowDatePicker(Platform.OS === "ios");
                       setDate(currentDate);
                       setData({
                         ...data,
@@ -300,30 +251,32 @@ const AddOrEditScreen = () => {
               <TouchableHighlight
                 style={styles.outlineButton}
                 onPress={() => {
-                  showDatePickerHandler('date');
+                  showDatePickerHandler("date");
                   setData({ ...data, dateTime: formatDateAndTime(date) });
-                }}>
-                <Text style={styles.setText}>{'Set Date'}</Text>
+                }}
+              >
+                <Text style={styles.setText}>{"Set Date"}</Text>
               </TouchableHighlight>
               <View style={{ marginVertical: 8 }} />
               <TouchableHighlight
                 style={styles.outlineButton}
                 onPress={() => {
-                  showDatePickerHandler('time');
+                  showDatePickerHandler("time");
                   setData({ ...data, dateTime: formatDateAndTime(date) });
-                }}>
-                <Text style={styles.setText}>{'Set Time'}</Text>
+                }}
+              >
+                <Text style={styles.setText}>{"Set Time"}</Text>
               </TouchableHighlight>
             </View>
           </View>
           <MainTextInput
-            placeholder={'e.g. 20000, 500000'}
-            label={'Monthly rent price ($/month)'}
+            placeholder={"Example 20000, 500000"}
+            label={"Monthly rent price ($/month)"}
             isRequired
             validRegExp={/^[0-9]{1,}$/}
-            errorText={'Just enter numeric and\nDo not leave it empty'}
-            keyboardType={'numeric'}
-            onChangeText={monthlyRentPrice => {
+            errorText={"Just enter numeric and\nDo not leave it empty"}
+            keyboardType={"numeric"}
+            onChangeText={(monthlyRentPrice) => {
               setData({ ...data, monthlyRentPrice });
             }}
             value={data.monthlyRentPrice}
@@ -377,11 +330,12 @@ const AddOrEditScreen = () => {
               <Text style={[styles.label, { marginTop: 5 }]}>Furniture</Text>
               <Text
                 disabled
-                name='type'
-                placeholder='Furniture type'
-                style={styles.chooseFurniture}>
+                name="type"
+                placeholder="Furniture type"
+                style={styles.chooseFurniture}
+              >
                 {!data.furnitureTypes
-                  ? 'Click to choose type'
+                  ? "Click to choose type"
                   : data.furnitureTypes}
               </Text>
             </TouchableOpacity>
@@ -389,44 +343,99 @@ const AddOrEditScreen = () => {
           <SlideupModal
             isShow={showPicker}
             setShow={setShowPicker}
-            title={'Select furniture type'}>
+            title={"Select furniture type"}
+          >
             <Picker
               style={styles.picker}
               selectedValue={data.furnitureTypes}
-              onValueChange={value => {
+              onValueChange={(value) => {
                 setData({ ...data, furnitureTypes: value });
                 setShowPicker(false);
-              }}>
-              <Picker.Item label='Furnished' value='Furnished' />
-              <Picker.Item label='Unfurnished' value='Unfurnished' />
-              <Picker.Item label='Semi-furnished' value='Semi-furnished' />
+              }}
+            >
+              <Picker.Item label="Furnished" value="Furnished" />
+              <Picker.Item label="Unfurnished" value="Unfurnished" />
+              <Picker.Item label="Semi-furnished" value="Semi-furnished" />
             </Picker>
           </SlideupModal>
 
           <MainTextInput
-            placeholder={'Add some notes here'}
-            label={'Notes'}
-            onChangeText={notes => {
+            placeholder={"Add some notes here"}
+            label={"Notes"}
+            onChangeText={(notes) => {
               setData({ ...data, notes });
             }}
             value={data.notes}
           />
           <MainTextInput
-            placeholder={'Enter name of reporter'}
-            label={'Reporter name'}
+            placeholder={"Enter name of reporter"}
+            label={"Reporter name"}
             isRequired
             validRegExp={/^[a-zA-Z]{3,}$/}
             errorText={
-              'Just enter alphabets, at least 3 characters and\nDo not leave it empty'
+              "Just enter alphabets, at least 3 characters and\nDo not leave it empty"
             }
-            onChangeText={reporterName => {
+            onChangeText={(reporterName) => {
               setData({ ...data, reporterName });
             }}
             value={data.reporterName}
           />
+
+          <Text style={styles.label}>{"Image"}</Text>
+          <View style={styles.pickImageContainer}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                borderBottomColor: "grey",
+                borderBottomWidth: 3,
+                paddingBottom: 10,
+              }}
+            >
+              <TouchableOpacity
+                style={[styles.outlineButton, { height: 50, flex: 1 }]}
+                onPress={async () => {
+                  // setData({ ...data });
+                  // pickImage();
+                  const result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.All,
+                    allowsEditing: true,
+                    aspect: [4, 3],
+                    quality: 1,
+                  });
+
+                  if (!result.cancelled) {
+                    setData({
+                      ...data,
+                      image: result.uri,
+                    });
+                  }
+                }}
+              >
+                <Text style={styles.setText}>{"Pick Image"}</Text>
+              </TouchableOpacity>
+              <View style={{ marginHorizontal: 8 }} />
+              <TouchableOpacity
+                style={[
+                  styles.outlineButton,
+                  { height: 50, backgroundColor: "red" },
+                ]}
+                onPress={() => {
+                  setData({ ...data, image: "" });
+                }}
+              >
+                <Text style={styles.setText}>{"Clear Image"}</Text>
+              </TouchableOpacity>
+            </View>
+            {data.image && data.image.length > 0 ? (
+              <Image source={{ uri: data.image }} style={styles.image} />
+            ) : (
+              <Text>{"No image choosed"}</Text>
+            )}
+          </View>
         </ScrollView>
         <MainButton
-          buttonText={'Save'}
+          buttonText={"Save"}
           fontSize={16}
           style={valid ? styles.saveColor : styles.disabledButton}
           disabled={!valid}
@@ -441,57 +450,57 @@ const AddOrEditScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 16,
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   saveColor: {
-    backgroundColor: '#00a680',
+    backgroundColor: "#00a680",
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   twoButton: {
     paddingHorizontal: 16,
     marginTop: 20,
   },
   outlineButton: {
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: '#231340',
+    backgroundColor: "#231340",
   },
   setText: {
-    color: '#fff',
+    color: "#fff",
   },
   picker: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
   },
   pickImageContainer: {
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingHorizontal: 16,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     marginTop: 16,
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
-    color: '#999',
+    color: "#999",
     marginLeft: 16,
   },
   chooseFurniture: {
@@ -503,7 +512,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
-    borderColor: '#d6d6d6',
+    borderColor: "#d6d6d6",
   },
 });
 

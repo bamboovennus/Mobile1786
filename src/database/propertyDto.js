@@ -264,24 +264,24 @@ export const deleteAllData = async (tableName) => {
   });
 };
 
-export const dropTable = async (tableName) => {
-  return new Promise((resolve, reject) => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        `
-          DROP TABLE ${tableName}
-        `,
-        [],
-        () => {
-          console.log("Drop table success");
-          resolve(true);
-        },
-        (error) => {
-          console.log("Drop table error", error);
-          reject(error);
-          return false;
-        }
-      );
-    });
-  });
-};
+// export const dropTable = async (tableName) => {
+//   return new Promise((resolve, reject) => {
+//     db.transaction((tx) => {
+//       tx.executeSql(
+//         `
+//           DROP TABLE ${tableName}
+//         `,
+//         [],
+//         () => {
+//           console.log("Drop table success");
+//           resolve(true);
+//         },
+//         (error) => {
+//           console.log("Drop table error", error);
+//           reject(error);
+//           return false;
+//         }
+//       );
+//     });
+//   });
+// };

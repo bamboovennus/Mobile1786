@@ -5,7 +5,7 @@ export const MainRoutes = {
   ADD_OR_EDIT: "AddOrEditScreen",
   DETAIL: "DetailScreen",
   SEARCH: "SearchScreen",
-  LOGIN: "LoginScreen",
+  AUTH: "AuthScreen",
 };
 
 export const MainStack = createNativeStackNavigator();

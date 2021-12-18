@@ -4,6 +4,7 @@ import { createTable } from "./database/propertyDto";
 import { createUserTable } from "./database/userDto";
 import { MainRoutes, MainStack } from "./routing";
 import AddOrEditScreen from "./screens/AddOrEditScreen";
+import AuthenticationScreen from "./screens/AuthenticationScreen";
 import LoginScreen from "./screens/AuthenticationScreen/LoginScreen";
 import DetailScreen from "./screens/DetailScreen";
 import HomeScreen from "./screens/HomeScreen";
@@ -19,7 +20,13 @@ const App = () => {
   return (
     <NavigationContainer>
       <MainStack.Navigator initialRouteName={MainRoutes.LOGIN}>
-        <MainStack.Screen name={MainRoutes.LOGIN} component={LoginScreen} />
+        <MainStack.Screen
+          name={MainRoutes.AUTH}
+          component={AuthenticationScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
         <MainStack.Screen name={MainRoutes.HOME} component={HomeScreen} />
         <MainStack.Screen
           name={MainRoutes.ADD_OR_EDIT}
